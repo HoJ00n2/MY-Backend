@@ -52,7 +52,7 @@ jobs:
     - name: Build and Push Docker Image
       run: |
         cd my_backend
-        docker buildx build --no-cache --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ secrets.REAL_ACTOR }}/my-django-backend-server:latest --push .
+        docker buildx build --no-cache --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ secrets.REAL_ACTOR }}/my-backend-server:latest --push .
 
   deploy:
     needs: build
@@ -93,7 +93,7 @@ jobs:
             docker-compose down
 
             echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.REAL_ACTOR }} --password-stdin
-            docker pull ghcr.io/${{ secrets.REAL_ACTOR }}/my-django-backend-server:latest
+            docker pull ghcr.io/${{ secrets.REAL_ACTOR }}/my-backend-server:latest
 
             docker image prune -f
             docker logout
