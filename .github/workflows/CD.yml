@@ -46,13 +46,13 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: ghcr.io
-        username: ${{ github.actor }}
+        username: ${{ secrets.REAL_ACTOR }}
         password: ${{ secrets.GHCR_TOKEN }}
 
     - name: Build and Push Docker Image
       run: |
         cd my_backend
-        docker buildx build --no-cache --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ github.actor }}/my-django-backend-server:latest --push .
+        docker buildx build --no-cache --platform linux/arm64 -f Dockerfile -t ghcr.io/${{ secrets.REAL_ACTOR }}/my-django-backend-server:latest --push .
 
   deploy:
     needs: build
@@ -78,7 +78,7 @@ jobs:
       uses: docker/login-action@v1
       with:
         registry: ghcr.io
-        username: ${{ github.actor }}
+        username: ${{ secrets.REAL_ACTOR }}
         password: ${{ secrets.GHCR_TOKEN }}
 
     - name: Deploy to Production
@@ -92,8 +92,8 @@ jobs:
             cd /home/ec2-user/my/django-backend
             docker-compose down
 
-            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker pull ghcr.io/${{ github.actor }}/my-django-backend-server:latest
+            echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u ${{ secrets.REAL_ACTOR }} --password-stdin
+            docker pull ghcr.io/${{ secrets.REAL_ACTOR }}/my-django-backend-server:latest
 
             docker image prune -f
             docker logout
