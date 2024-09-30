@@ -1,19 +1,14 @@
-version: '3'
 services:
   django:
     container_name: django
-    build: .
+    image: ghcr.io/${GITHUB_ACTOR}/my-backend-server:latest
     command: /app/wait-for-it.sh db:3306 -t 15 -- sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
     environment:
       - DJANGO_SETTINGS_MODULE=my_backend.settings
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
@@ -33,7 +28,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
     networks:
-      - app-network
+      - app
 
   db:
     image: mysql:8.0
@@ -72,7 +67,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - app-network
+      - app
 
 volumes:
   db_data:
@@ -80,5 +75,5 @@ volumes:
   app:
 
 networks:
-  app-network:
+  app:
     driver: bridge
