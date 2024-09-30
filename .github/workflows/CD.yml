@@ -61,7 +61,7 @@ jobs:
     steps:
     - name: Get Github Actions IP
       id: publicip
-      run |
+      run: |
         response=$(curl -s canhazip.com)
         echo "ip=$response" >> "$GITHUB_OUTPUT"
       
